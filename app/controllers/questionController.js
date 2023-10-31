@@ -1,13 +1,22 @@
-const Question = require('../models/question');
+const aqp = require("api-query-params");
+const Question = require("../models/question");
 
 const getQuestions = async (req, res) => {
-    try {
-      const questions = await Question.find();
-      res.status(200).json(questions);
-    } catch (error) {
-      console.error('Error fetching questions:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
+  const { filter, skip, limit, sort, projection, population } = aqp(req.query);
+  try {
+    let total_records = await Question.countDocuments();
+    let questions = await Question.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort(sort)
+      .select(projection)
+      .populate(population);
+    let resp = {items: questions, total_records: total_records};
+    res.status(200).json(resp);
+  } catch (error) {
+    console.error("Error fetching questions:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 const createQuestion = async (req, res) => {
@@ -16,11 +25,44 @@ const createQuestion = async (req, res) => {
   try {
     const newQues = new Question({ category, content, parent_category });
     await newQues.save();
-    res.status(201).json({ message: 'Question created successfully' });
+    res.status(201).json({ message: "Question created successfully" });
   } catch (error) {
-    console.error('Error creating question:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error creating question:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
-  
-module.exports = { createQuestion, getQuestions };
+
+const createQuestions = async (req, res) => {
+    const { items } = req.body;
+    try {
+      Question.insertMany(items);
+      res.status(201).json({ message: "Questions created successfully" });
+    } catch (error) {
+      console.error("Error creating question:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
+const deleteQuestion = async (req, res) => {
+  const { filter } = aqp(req.query);
+  try {
+    await Question.findByIdAndDelete(filter);
+    res.status(200).json({ message: "Delete question successfully" });
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const deleteQuestions = async (req, res) => {
+    const { items } = req.body;
+    try {
+      await Question.deleteMany({ _id: items });
+      res.status(200).json({ message: "Delete questions successfully" });
+    } catch (error) {
+      console.error("Error deleting question:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+
+module.exports = { createQuestion, createQuestions, getQuestions, deleteQuestion, deleteQuestions };

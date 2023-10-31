@@ -22,5 +22,30 @@ const createUser = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+const login = async (req, res) => {
+    const {email, password} = req.body;
+    try {
+        const user = await User.findOne({email: email, password: password})
+        if (user) {
+            res.status(200).json({ message: 'Login successfully'})
+        } else {
+            res.status(400).json({ error: 'Invalid email/password'})
+        }
+    } catch (error) {
+        console.error('Error login', error);
+        res.status(500).json({ error: 'Internal server error'});
+    }
+}
+
+const updateUser = async (req, res) => {
+    const { email } = req.body;
+    try {
+        await User.updateOne({email: email}, {isActive: false})
+        res.status(200).json({ message: 'Update user status successfully'});
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error'});
+    }
+}
   
-module.exports = { createUser, getUsers };
+module.exports = { createUser, getUsers, login, updateUser };

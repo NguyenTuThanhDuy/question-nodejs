@@ -8,8 +8,13 @@ const questionSchema = buildSchema(`
     parent_category: String,
   }
 
+  type QuestionArray {
+    items: [Question!]!,
+    total_records: Int
+  }
+
   type Query {
-    getQuestions: [Question]
+    questions: QuestionArray
   }
 
   type Mutation {

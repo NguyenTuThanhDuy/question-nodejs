@@ -1,11 +1,14 @@
 const Question = require('../../app/models/question');
+const { getQuestions } = require('../../app/controllers/questionController');
 
 const questionResolvers = {
   Query: {
-    getQuestions: async () => {
+    questions: async () => {
       try {
-        const questions = await Question.find();
-        return questions;
+        let questions = await Question.find();
+        let total_records = await Question.countDocuments();
+        let resp = {items: questions, total_records: total_records};
+        return resp;
       } catch (error) {
         throw new Error('Failed to fetch questions');
       }

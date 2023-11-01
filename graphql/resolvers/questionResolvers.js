@@ -1,5 +1,4 @@
 const Question = require('../../app/models/question');
-const { getQuestions } = require('../../app/controllers/questionController');
 
 const questionResolvers = {
   Query: {

@@ -58,11 +58,11 @@ const createQuestions = async (req, res) => {
 
 const updateQuestion = async (req, res) => {
     const { question_id } = req.params;
-    const { category, content } = req.body;
+    const { category, content, parent_category } = req.body;
     try {
         const result = await Question.findOneAndUpdate(
             { _id: question_id },
-            { category: category, content: content},
+            { category: category, content: content, parent_category: parent_category},
             { 
                 new: true,
             }

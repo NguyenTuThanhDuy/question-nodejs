@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const {
     createQuestion,
     createQuestions,
@@ -10,14 +11,15 @@ const {
     exportCSV,
 } = require('../controllers/questionController');
 
+const upload = multer();
 const router = express.Router();
 
 router.get('/questions', getQuestions);
 router.post('/questions', createQuestion);
-router.post('/questions/create', createQuestions);
+router.post('/questions/upload', upload.single('csvFile'), createQuestions);
 router.post('/questions/selected', getSelectedQuestions);
 router.put('/questions/:question_id', updateQuestion);
-router.delete('/questions', deleteQuestion);
+router.delete('/questions/:question_id', deleteQuestion);
 router.post('/questions/delete', deleteQuestions);
 router.post('/questions/export', exportCSV);
 

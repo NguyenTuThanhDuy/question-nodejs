@@ -10,10 +10,11 @@ const {
     updateQuestion,
     exportCSV,
 } = require('../controllers/questionController');
+const { authenticateToken } = require('../controllers/userController');
 
 const upload = multer();
 const router = express.Router();
-
+router.use(authenticateToken);
 router.get('/questions', getQuestions);
 router.post('/questions', createQuestion);
 router.post('/questions/upload', upload.single('csvFile'), createQuestions);

@@ -1,4 +1,24 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const secretKey = 'tHj$1$m`/$3creT|<3y';
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+  
+    jwt.verify(token, secretKey, (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: 'Forbidden error' });
+      }
+  
+      req.user = user;
+      next();
+    });
+  }
 
 const getUsers = async (req, res) => {
     try {
@@ -28,7 +48,12 @@ const login = async (req, res) => {
     try {
         const user = await User.findOne({email: email, password: password})
         if (user) {
-            res.status(200).json({ message: 'Login successfully'})
+            const payload = {
+                id: user.id,
+                email: user.email
+            }
+            const token = jwt.sign(payload, secretKey);
+            res.status(200).json({ message: 'Login successfully', access_token: token })
         } else {
             res.status(400).json({ error: 'Invalid email/password'})
         }
@@ -48,4 +73,4 @@ const updateUser = async (req, res) => {
     }
 }
   
-module.exports = { createUser, getUsers, login, updateUser };
+module.exports = { createUser, getUsers, login, updateUser, authenticateToken };

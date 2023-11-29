@@ -8,11 +8,14 @@ const MONGO_HOST = process.env.MONGO_HOST;
 const MONGO_PORT = process.env.MONGO_PORT;
 const MONGO_DB_NAME = process.env.MONGO_DB_NAME;
 
-const mongoUrl = `${MONGO_ENGINE}${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
+const username = encodeURIComponent("pnpdev9@gmail.com");
+const password = encodeURIComponent("S8t0Jr9qY^!g");
 
+// const mongoUrl = `${MONGO_ENGINE}${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}`;
+const mongoUrl = `mongodb+srv://${username}:${password}@cadb.vo7grnd.mongodb.net/?retryWrites=true&w=majority`
 const connectDB = async () => {
   try {
-    await mongoose.connect(`${mongoUrl}/${MONGO_DB_NAME}?authSource=admin`, {
+    await mongoose.connect(`${mongoUrl}?authSource=admin`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

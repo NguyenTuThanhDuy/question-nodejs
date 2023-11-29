@@ -4,7 +4,7 @@ const { createUser, getUsers, login, updateUser } = require('../controllers/user
 const router = express.Router();
 
 router.get('/users', getUsers);
-router.post('/users', createUser);
+router.post('/signup', createUser);
 router.post('/deactivate', updateUser);
 router.post('/login', login);
 module.exports = router;
